@@ -61,8 +61,6 @@ export const updateSession = async (request: NextRequest) => {
 
     const loggedUrls = ["/signin", "/signup", "/forgot-password", "/update-password"];
     const notLoggedin = ["/profile", "/my-snippets"];
-    console.log(user);
-    console.log(request.nextUrl.pathname);
 
     if (!user && notLoggedin.includes(request.nextUrl.pathname)) {
       return NextResponse.redirect(new URL("/signin", request.url));
