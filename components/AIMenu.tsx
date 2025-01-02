@@ -4,8 +4,10 @@ import {ArrowRight, GripVertical, RotateCcw, WandSparkles, X} from "lucide-react
 import {useEffect, useRef, useState} from "react";
 import ReactMarkdown from "react-markdown";
 import AIResponseFormatter from "./AIResponseFormatter";
+import {useToast} from "@/hooks/use-toast";
 
 export default function AIMenu() {
+  const {toast} = useToast();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<[] | AiMessageType[]>([]);
@@ -31,6 +33,13 @@ export default function AIMenu() {
           },
           body: JSON.stringify({query, history}),
         });
+        if (!res.ok) {
+          toast({title: "Something went wrong!", variant: "destructive"});
+          setQuery(query);
+          setMessages((prev) => prev.slice(1));
+          setLoading(false);
+          return;
+        }
         setMessages((prev) => [
           {
             role: "assistant",
@@ -54,10 +63,12 @@ export default function AIMenu() {
           }
         } catch (error) {
           console.error("Error reading stream:", error);
+          toast({title: "Something went wrong!", variant: "destructive"});
         }
         setLoading(false);
       } catch (err) {
         console.log(err);
+        toast({title: "Something went wrong!", variant: "destructive"});
         setLoading(false);
       }
     }
